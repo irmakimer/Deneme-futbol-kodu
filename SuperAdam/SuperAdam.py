@@ -17,15 +17,14 @@ clock = pygame.time.Clock()
 WHITE = (230, 230, 230)
 BLACK = (0, 0, 0)
 RED = (200, 50, 50)
-GREEN = (50, 200, 0)
-
-#############################################################################################################
-
+GREEN = (50, 200, 100)
 
 # Görseller
 oyuncu_standing = pygame.image.load('Resimler/run1.png')
+
 top_resmi = pygame.image.load("Resimler/futboltopu.png").convert_alpha()
-top_resmi= pygame.transform.scale(top_resmi, (50, 50))
+top_resmi = pygame.transform.scale(top_resmi, (50, 50))
+
 arkaplan_resmi = pygame.image.load("Resimler/stadyum.jpg").convert()
 arkaplan_resmi = pygame.transform.scale(arkaplan_resmi, (WIDTH, HEIGHT))
 
@@ -38,14 +37,12 @@ sut_animasyonlari = [
     pygame.image.load("Resimler/run4.png")
 ]
 
-
 # Karakter
 eni, boyu = 64, 64
 vel = 5
 
 animasyon_zamanlayici = 0
-frame_gecikmesi = 5  # Her animasyon karesi 5 frame boyunca gösterilecek
-
+frame_gecikmesi = 5
 
 # Top
 top_start = [150, HEIGHT - 50]
@@ -57,10 +54,11 @@ top_hareketli_mi = False
 vektor = [0, 0]
 yer_cekimi = 0.5
 skor = 0
-total_atislar= 0
-bounces = 0
-bounce_limit = 3
-bounce_damping = 0.7
+total_atislar = 0
+sekme = 0
+sekme_limiti = 3
+sekmedeki_yukseklik_azalmasi = 0.7
+top_donus_acisi = 0
 
 # Şut animasyonu kontrol
 sut_animation = False
@@ -78,6 +76,7 @@ start_time = None
 zaman_siniri = 90
 gecen_sure = 0
 
+# Random kale yeri ve boyutu
 def random_hoop():
     hoop_y = random.randint(100, HEIGHT - 200)
     hoop_h = random.randint(80, 140)
@@ -91,7 +90,7 @@ def yuksek_skor_yukle():
 
 def yuksek_skor_kaydet(skor):
     with open("highest_score.txt", "w") as f:
-        f.write(str(score))
+        f.write(str(skor))
 
 yuksek_skor = yuksek_skor_yukle()
 hoop = random_hoop()
@@ -110,7 +109,6 @@ def gidis_yonu_cizimi(pos, aci, guc):
     if len(noktalar) > 1:
         pygame.draw.lines(screen, WHITE, False, noktalar, 2)
 
-        # Uca ok çizelim
         if len(noktalar) >= 2:
             p1 = noktalar[-2]
             p2 = noktalar[-1]
@@ -123,27 +121,27 @@ def gidis_yonu_cizimi(pos, aci, guc):
             ok_aci = math.radians(30)
 
             sol = (
-            p2[0] - ok_uzunluk * math.cos(aci - ok_aci), p2[1] - ok_uzunluk * math.sin(aci - ok_aci))
+                p2[0] - ok_uzunluk * math.cos(aci - ok_aci), p2[1] - ok_uzunluk * math.sin(aci - ok_aci))
             sag = (
-            p2[0] - ok_uzunluk * math.cos(aci + ok_aci), p2[1] - ok_uzunluk * math.sin(aci + ok_aci))
+                p2[0] - ok_uzunluk * math.cos(aci + ok_aci), p2[1] - ok_uzunluk * math.sin(aci + ok_aci))
 
             pygame.draw.line(screen, WHITE, p1, p2, 2)
             pygame.draw.line(screen, WHITE, p2, sol, 2)
             pygame.draw.line(screen, WHITE, p2, sag, 2)
 
-
 def reset_top():
-    global top_pos, vektor, top_hareketli_mi, bounces
+    global top_pos, vektor, top_hareketli_mi, sekme, top_donus_acisi
     top_pos = list(top_start)
     vektor = [0, 0]
-    bounces = 0
+    sekme = 0
     top_hareketli_mi = False
+    top_donus_acisi = 0
 
 def giris_menusu():
     screen.blit(arkaplan_resmi, (0, 0))
     baslik = baslik_font.render("Futbol Oyunu", True, WHITE)
-    giris_text = font.render("ENTER - Başlat", True, WHITE)
-    cikis_text = font.render("ESC - Çıkış", True, WHITE)
+    giris_text = font.render("ENTER - Başlat", True, GREEN)
+    cikis_text = font.render("ESC - Çıkış", True, RED)
     screen.blit(baslik, (WIDTH // 2 - baslik.get_width() // 2, 160))
     screen.blit(giris_text, (WIDTH // 2 - giris_text.get_width() // 2, 250))
     screen.blit(cikis_text, (WIDTH // 2 - cikis_text.get_width() // 2, 290))
@@ -222,7 +220,7 @@ while True:
         if keys[pygame.K_UP]:
             top_aci = min(80, top_aci + 1)
         if keys[pygame.K_DOWN]:
-            top_aci = max(10, top_aci- 1)
+            top_aci = max(10, top_aci - 1)
         if keys[pygame.K_RIGHT]:
             guc = min(50, guc + 1)
         if keys[pygame.K_LEFT]:
@@ -240,7 +238,7 @@ while True:
     if sut_animation:
         if sut_frame < len(sut_animasyonlari):
             if animasyon_zamanlayici % frame_gecikmesi == 0:
-                screen.blit(sut_animasyonlari[sut_frame], (top_pos[0] - 150, HEIGHT - 250))  # Karakter top hizasında
+                screen.blit(sut_animasyonlari[sut_frame], (top_pos[0] - 150, HEIGHT - 250))
                 sut_frame += 1
             else:
                 screen.blit(sut_animasyonlari[sut_frame - 1], (top_pos[0] - 150, HEIGHT - 250))
@@ -251,42 +249,47 @@ while True:
             animasyon_zamanlayici = 0
             top_hareketli_mi = True
     else:
-        screen.blit(oyuncu_standing, (WIDTH - 780, HEIGHT - 250))  # Duran pozisyonda topla aynı hizada
+        screen.blit(oyuncu_standing, (WIDTH - 780, HEIGHT - 250))
 
     if top_hareketli_mi:
         vektor[1] += yer_cekimi
         top_pos[0] += vektor[0]
         top_pos[1] += vektor[1]
+        top_donus_acisi = (top_donus_acisi + 10) % 360
 
-        ball_rect = pygame.Rect(top_pos[0] - top_yaricap, top_pos[1] - top_yaricap, top_yaricap, top_yaricap * 2)
-        if ball_rect.colliderect(hoop):
+        #Gol olması
+        top_rect = pygame.Rect(top_pos[0] - top_yaricap-10,top_pos[1] - top_yaricap-10, top_yaricap, top_yaricap * 2)
+        if top_rect.colliderect(hoop):
             skor += 1
             hoop = random_hoop()
             reset_top()
         elif top_pos[1] + top_yaricap >= HEIGHT:
-            if bounces < bounce_limit:
+            if sekme < sekme_limiti:
                 top_pos[1] = HEIGHT - top_yaricap
-                vektor[1] = -vektor[1] * bounce_damping
+                vektor[1] = -vektor[1] * sekmedeki_yukseklik_azalmasi
                 vektor[0] *= 0.8
-                bounces += 1
+                sekme += 1
             else:
                 reset_top()
         elif top_pos[0] > WIDTH:
             reset_top()
 
-    screen.blit(top_resmi, (int(top_pos[0] - top_yaricap), int(top_pos[1] - top_yaricap)))
+    # Topun döndürerek çizimi
+    dondurulmus_top = pygame.transform.rotate(top_resmi, -top_donus_acisi)
+    dondurulmus_rect = dondurulmus_top.get_rect(center=(int(top_pos[0]), int(top_pos[1])))
+    screen.blit(dondurulmus_top, dondurulmus_rect.topleft)
+
     screen.blit(pygame.transform.scale(kale_resmi, (hoop.width, hoop.height)), (hoop.x, hoop.y))
 
     if not top_hareketli_mi and not sut_animation:
         gidis_yonu_cizimi(top_pos, top_aci, guc)
 
-
-    isabet = round((skor / total_atislar) * 100, 1) if total_atislar > 0 else 0
+    isabet_orani = round((skor / total_atislar) * 100, 1) if total_atislar > 0 else 0
     screen.blit(font.render(f"Açı: {top_aci}", True, WHITE), (10, 10))
     screen.blit(font.render(f"Güç: {guc}", True, WHITE), (10, 30))
     screen.blit(font.render(f"Skor: {skor}", True, WHITE), (10, 50))
     screen.blit(font.render(f"Atış: {total_atislar}", True, WHITE), (10, 70))
-    screen.blit(font.render(f"İsabet Oranı: %{isabet}", True, WHITE), (10, 90))
+    screen.blit(font.render(f"İsabet Oranı: %{isabet_orani}", True, WHITE), (10, 90))
     screen.blit(font.render(f"Süre: {zaman_siniri - gecen_sure}s", True, RED), (10, 110))
     screen.blit(skor_font.render(f"En Yüksek Skor: {yuksek_skor}", True, GREEN), (WIDTH - 330, 15))
 
