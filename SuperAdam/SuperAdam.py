@@ -291,6 +291,6 @@ while True:
     screen.blit(font.render(f"Atış: {total_atislar}", True, WHITE), (10, 70))
     screen.blit(font.render(f"İsabet Oranı: %{isabet_orani}", True, WHITE), (10, 90))
     screen.blit(font.render(f"Süre: {zaman_siniri - gecen_sure}s", True, RED), (10, 110))
-    screen.blit(skor_font.render(f"En Yüksek Skor: {yuksek_skor}", True, GREEN), (WIDTH - 330, 15))
+    screen.blit(skor_font.render(f"En Yüksek Skor: {yuksek_skor}", True, WHITE), (WIDTH - 330, 15))
 
     pygame.display.flip()
