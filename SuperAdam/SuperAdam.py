@@ -42,7 +42,7 @@ eni, boyu = 64, 64
 vel = 5
 
 animasyon_zamanlayici = 0
-frame_gecikmesi = 5
+frame_gecikmesi = 7
 
 # Top
 top_start = [150, HEIGHT - 50]
