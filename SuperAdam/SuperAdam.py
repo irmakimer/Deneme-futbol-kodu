@@ -25,7 +25,7 @@ oyuncu_standing = pygame.image.load('Resimler/run1.png')
 top_resmi = pygame.image.load("Resimler/futboltopu.png").convert_alpha()
 top_resmi = pygame.transform.scale(top_resmi, (50, 50))
 
-arkaplan_resmi = pygame.image.load("Resimler/tribune6.png").convert()
+arkaplan_resmi = pygame.image.load("Resimler/tribune6 (1).png").convert()
 arkaplan_resmi = pygame.transform.scale(arkaplan_resmi, (WIDTH, HEIGHT))
 
 kale_resmi = pygame.image.load("Resimler/kale.png").convert_alpha()
@@ -73,7 +73,7 @@ skor_font = pygame.font.SysFont(None, 48)
 menu = True
 oyun_bitti = False
 start_time = None
-zaman_siniri = 90
+zaman_siniri = 5
 gecen_sure = 0
 
 # Random kale yeri ve boyutu
@@ -142,9 +142,9 @@ def giris_menusu():
     baslik = baslik_font.render("Futbol Oyunu", True, WHITE)
     giris_text = font.render("ENTER - Başlat", True, GREEN)
     cikis_text = font.render("ESC - Çıkış", True, RED)
-    screen.blit(baslik, (WIDTH // 2 - baslik.get_width() // 2, 160))
-    screen.blit(giris_text, (WIDTH // 2 - giris_text.get_width() // 2, 250))
-    screen.blit(cikis_text, (WIDTH // 2 - cikis_text.get_width() // 2, 290))
+    screen.blit(baslik, (WIDTH // 2 - baslik.get_width() // 2, 270))
+    screen.blit(giris_text, (WIDTH // 2 - giris_text.get_width() // 2, 350))
+    screen.blit(cikis_text, (WIDTH // 2 - cikis_text.get_width() // 2, 375))
     pygame.display.flip()
 
 def oyun_bitti_menusu():
@@ -152,14 +152,14 @@ def oyun_bitti_menusu():
     oyun_bitti_text = baslik_font.render("Oyun Bitti!", True, RED)
     skor_text = skor_font.render(f"Skor: {skor}", True, BLACK)
     yuksek_skor_text = skor_font.render(f"En Yüksek Skor: {yuksek_skor}", True, GREEN)
-    yeniden_baslat_text = font.render("ENTER - Yeniden Başlat", True, BLACK)
-    cikis_text = font.render("ESC - Çıkış", True, BLACK)
+    yeniden_baslat_text = font.render("ENTER - Yeniden Başlat", True, WHITE)
+    cikis_text = font.render("ESC - Çıkış", True, WHITE)
 
     screen.blit(oyun_bitti_text, (WIDTH // 2 - oyun_bitti_text.get_width() // 2, 180))
-    screen.blit(skor_text, (WIDTH // 2 - skor_text.get_width() // 2, 240))
-    screen.blit(yuksek_skor_text, (WIDTH // 2 - yuksek_skor_text.get_width() // 2, 280))
-    screen.blit(yeniden_baslat_text, (WIDTH // 2 - yeniden_baslat_text.get_width() // 2, 360))
-    screen.blit(cikis_text, (WIDTH // 2 - cikis_text.get_width() // 2, 390))
+    screen.blit(skor_text, (WIDTH // 2 - skor_text.get_width() // 2, 255))
+    screen.blit(yuksek_skor_text, (WIDTH // 2 - yuksek_skor_text.get_width() // 2, 290))
+    screen.blit(yeniden_baslat_text, (WIDTH // 2 - yeniden_baslat_text.get_width() // 2, 350))
+    screen.blit(cikis_text, (WIDTH // 2 - cikis_text.get_width() // 2, 380))
     pygame.display.flip()
 
 # Ana Oyun Döngüsü
@@ -289,8 +289,8 @@ while True:
     screen.blit(font.render(f"Güç: {guc}", True, WHITE), (10, 30))
     screen.blit(font.render(f"Skor: {skor}", True, WHITE), (10, 50))
     screen.blit(font.render(f"Atış: {total_atislar}", True, WHITE), (10, 70))
-    screen.blit(font.render(f"İsabet Oranı: %{isabet_orani}", True, WHITE), (10, 90))
-    screen.blit(font.render(f"Süre: {zaman_siniri - gecen_sure}s", True, RED), (10, 110))
+    screen.blit(font.render(f"İsabet Oranı: %{isabet_orani}", True, GREEN), (10, 105))
+    screen.blit(font.render(f"Süre: {zaman_siniri - gecen_sure}s", True, RED), (10, 125))
     screen.blit(skor_font.render(f"En Yüksek Skor: {yuksek_skor}", True, WHITE), (WIDTH - 330, 15))
 
     pygame.display.flip()
