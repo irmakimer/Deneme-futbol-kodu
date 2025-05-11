@@ -25,7 +25,7 @@ oyuncu_standing = pygame.image.load('Resimler/run1.png')
 top_resmi = pygame.image.load("Resimler/futboltopu.png").convert_alpha()
 top_resmi = pygame.transform.scale(top_resmi, (50, 50))
 
-arkaplan_resmi = pygame.image.load("Resimler/tribune6 (1).png").convert()
+arkaplan_resmi = pygame.image.load("Resimler/stadyum.png").convert()
 arkaplan_resmi = pygame.transform.scale(arkaplan_resmi, (WIDTH, HEIGHT))
 
 kale_resmi = pygame.image.load("Resimler/kale.png").convert_alpha()
@@ -73,7 +73,7 @@ skor_font = pygame.font.SysFont(None, 48)
 menu = True
 oyun_bitti = False
 start_time = None
-zaman_siniri = 5
+zaman_siniri = 90
 gecen_sure = 0
 
 # Random kale yeri ve boyutu
@@ -174,7 +174,7 @@ while True:
         if keys[pygame.K_RETURN]:
             menu = False
             start_time = time.time()
-            score = 0
+            skor = 0
             total_atislar = 0
             gecen_sure = 0
             reset_top()
@@ -192,7 +192,7 @@ while True:
                 sys.exit()
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RETURN]:
-            game_over = False
+            oyun_bitti = False
             menu = True
         elif keys[pygame.K_ESCAPE]:
             pygame.quit()
